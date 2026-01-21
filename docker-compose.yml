@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # PostgreSQL база данных
+  postgres:
+    image: postgres:15-alpine
+    container_name: haus_price_db
+    environment:
+      POSTGRES_DB: haus_price_db
+      POSTGRES_USER: haus_user
+      POSTGRES_PASSWORD: haus_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U haus_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Тестовая база данных
+  postgres_test:
+    image: postgres:15-alpine
+    container_name: haus_price_test_db
+    environment:
+      POSTGRES_DB: haus_price_test
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+
+  # MATRIX CORE API (Блоки A, C, D)
+  api:
+    build:
+      context: .
+      dockerfile: ./infrastructure/docker/Dockerfile.api
+    container_name: haus_price_api
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://haus_user:haus_password@postgres:5432/haus_price_db
+      - APP_ENV=production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+  # Nginx для прокси
+  nginx:
+    image: nginx:alpine
+    container_name: haus_price_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./infrastructure/nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # Redis для кэширования
+  redis:
+    image: redis:7-alpine
+    container_name: haus_price_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+volumes:
+  postgres_data:
+  postgres_test_data:
+  redis_data:
