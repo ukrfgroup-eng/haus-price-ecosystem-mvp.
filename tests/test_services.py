@@ -1,6 +1,18 @@
 import sys
 import os
 
+# Добавляем путь к проекту в sys.path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, '..'))
+sys.path.insert(0, project_root)
+
+# Теперь импортируем
+from backend.services.invoice_generator import InvoiceGenerator
+from backend.services.revenue_analytics import RevenueAnalytics
+from backend.services.fns_service import FNSVerificationService
+import sys
+import os
+
 # Добавляем корневую директорию в путь
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
