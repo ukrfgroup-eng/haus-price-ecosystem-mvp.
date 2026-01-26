@@ -1,21 +1,19 @@
 cat > services/__init__.py << 'EOF'
 """
-Сервисы блока D - бизнес-логика системы монетизации
+Сервисы блока D - система монетизации
 """
 
-from .payment_processor import PaymentProcessor
-from .subscription_manager import SubscriptionManager
+from .payment_processor import PaymentProcessor, PaymentStatus
+from .subscription_manager import SubscriptionManager, SubscriptionStatus
 from .tariff_service import TariffService
-from .invoice_generator import InvoiceGenerator
 from .revenue_analytics import RevenueAnalytics
-from .notification_service import NotificationService
 
 __all__ = [
     'PaymentProcessor',
+    'PaymentStatus',
     'SubscriptionManager',
+    'SubscriptionStatus',
     'TariffService',
-    'InvoiceGenerator',
-    'RevenueAnalytics',
-    'NotificationService'
+    'RevenueAnalytics'
 ]
 EOF
