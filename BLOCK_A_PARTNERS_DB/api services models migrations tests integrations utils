@@ -1,1 +1,5 @@
-
+cd api
+touch __init__.py
+touch routes.py
+touch admin_routes.py
+cd ..
