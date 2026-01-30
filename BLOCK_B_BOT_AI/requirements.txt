@@ -1,1 +1,10 @@
-
+touch BLOCK_B_BOT_AI/requirements.txt
+cat > BLOCK_B_BOT_AI/requirements.txt << 'EOF'
+Flask==3.0.0
+redis==5.0.1
+requests==2.31.0
+python-dotenv==1.0.0
+pydantic==2.5.0
+nltk==3.8.1
+pytest==7.4.3
+EOF
