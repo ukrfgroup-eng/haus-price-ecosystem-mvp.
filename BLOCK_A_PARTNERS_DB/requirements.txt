@@ -1,5 +1,4 @@
-# Создайте чистый requirements.txt только с пакетами
-cat > requirements_clean.txt << 'EOF'
+
 Flask==2.3.3
 SQLAlchemy==2.0.19
 alembic==1.12.1
@@ -16,7 +15,20 @@ PyJWT==2.8.0
 cryptography==41.0.4
 psycopg2-binary==2.9.7
 EOF
+Flask==2.3.3
+SQLAlchemy==2.0.19
+Flask-SQLAlchemy==3.0.5
+Flask-Migrate==4.0.5
+alembic==1.12.1
+requests==2.31.0
+python-dotenv==1.0.0
+psycopg2-binary==2.9.7
+boto3==1.28.62
+redis==5.0.1
+PyJWT==2.8.0
+cryptography==41.0.4
+celery==5.3.1
+pytest==7.4.2
+pytest-cov==4.1.0
+EOF
 
-# Или если хотите оставить ваши текущие зависимости, но убрать команды:
-grep -v "^python -m" requirements.txt | grep -v "^pip" | grep -v "^#" > requirements_clean.txt
-grep -E "^[a-zA-Z]" requirements_clean.txt > requirements_final.txt
