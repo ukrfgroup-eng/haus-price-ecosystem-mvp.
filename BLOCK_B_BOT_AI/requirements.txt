@@ -1,10 +1,41 @@
-touch BLOCK_B_BOT_AI/requirements.txt
-cat > BLOCK_B_BOT_AI/requirements.txt << 'EOF'
-Flask==3.0.0
-redis==5.0.1
-requests==2.31.0
-python-dotenv==1.0.0
-pydantic==2.5.0
-nltk==3.8.1
-pytest==7.4.3
+# Создайте скрипт для генерации правильного requirements.txt
+cat > generate_requirements.py << 'EOF'
+#!/usr/bin/env python3
+import re
+import sys
+
+def clean_requirements(input_file, output_file):
+    """Очищает requirements.txt от команд и оставляет только пакеты"""
+    with open(input_file, 'r') as f:
+        lines = f.readlines()
+    
+    cleaned = []
+    for line in lines:
+        line = line.strip()
+        # Пропускаем пустые строки и комментарии
+        if not line or line.startswith('#'):
+            continue
+        
+        # Пропускаем команды
+        if line.startswith('python ') or line.startswith('pip ') or line.startswith('echo '):
+            continue
+        
+        # Оставляем только строки с названиями пакетов
+        # Формат: package==version или package>=version и т.д.
+        if re.match(r'^[a-zA-Z0-9_-]+[=<>!~].*', line) or re.match(r'^[a-zA-Z0-9_-]+$', line):
+            cleaned.append(line)
+    
+    with open(output_file, 'w') as f:
+        for line in cleaned:
+            f.write(line + '\n')
+    
+    print(f"Очищено {len(lines)} строк -> {len(cleaned)} пакетов")
+    return cleaned
+
+if __name__ == "__main__":
+    input_file = sys.argv[1] if len(sys.argv) > 1 else "requirements.txt"
+    output_file = sys.argv[2] if len(sys.argv) > 2 else "requirements_clean.txt"
+    clean_requirements(input_file, output_file)
 EOF
+
+python generate_requirements.py requirements.txt requirements_clean.txt
